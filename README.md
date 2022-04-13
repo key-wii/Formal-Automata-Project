@@ -1,0 +1,1 @@
+Open Project1.sln in Visual Studio 2019 and press F5 to start program
