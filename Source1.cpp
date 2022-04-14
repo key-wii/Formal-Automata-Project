@@ -1,10 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include<stdio.h>
-#include<ctype.h>
+#include <stdio.h>
+#include <ctype.h>
 #include <vector>
-#include "input.h"
 using namespace std;
 
 void inputNum() {
