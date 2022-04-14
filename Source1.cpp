@@ -7,15 +7,16 @@
 #include "input.h"
 using namespace std;
 
-vector<vector <int>> inputNum() {
+void inputNum() {
     string input;
     vector<int> whole;
     vector<int> dec;
-    vector<vector <int>> full;
+    vector<int> exp;
+    long double full = 0;
     do {
         whole.clear();
         dec.clear();
-        full.clear();
+        exp.clear();
 
         cout << "Please input a floating point number (or q to quit)\n";
         cout << "> ";
@@ -33,14 +34,16 @@ vector<vector <int>> inputNum() {
         }
         int decPlace = 0;
 
-
         bool exponent = false;
-        long double expPart = 0;
+        bool expFirst = true;
+        int expSign = 1;
 
-        bool output = true;
-        if (nextSymbol == 'q' || nextSymbol == 'Q') return full;
+        bool suffix = false;
+        bool fail = false;
+
+        if (nextSymbol == 'q' || nextSymbol == 'Q') return;
         else if (decimal || isdigit(nextSymbol)) {
-            whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+            if (!decimal) whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
             while (i < input.length() && !decimal) {
                 prevSymbol = nextSymbol;
                 nextSymbol = input[i];
@@ -50,13 +53,12 @@ vector<vector <int>> inputNum() {
                 }
                 else if (nextSymbol == '_') {
                     if (i == input.length() - 1) {
-                        cout << "Invalid Input. Try again.\n\n";
-                        output = false;
+                        fail = true;
                         break;
                     }
                 }
                 else if (i == input.length() - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
-                    //do nothing
+                    suffix = true;
                 }
                 else if (i != input.length() - 1 && (nextSymbol == 'e' || nextSymbol == 'E')) {
                     exponent = true;
@@ -65,15 +67,13 @@ vector<vector <int>> inputNum() {
                 }
                 else if (nextSymbol == '.') {
                     if (prevSymbol == '_') {
-                        cout << "Invalid Input. Try again.\n\n";
-                        output = false;
+                        fail = true;
                         break;
                     }
                     else decimal = true;
                 }
                 else {
-                    cout << "Invalid Input. Try again.\n\n";
-                    output = false;
+                    fail = true;
                     break;
                 }
                 i++;
@@ -86,21 +86,20 @@ vector<vector <int>> inputNum() {
                 }
                 else if (nextSymbol == '_') {
                     if (i == input.length() - 1 || decPlace == 0) {
-                        cout << "Invalid Input. Try again.\n\n";
-                        output = false;
+                        fail = true;
                         break;
                     }
                 }
                 else if (i == input.length() - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
-                    //do nothing
+                    suffix = true;
                 }
                 else if (nextSymbol == 'e' || nextSymbol == 'E') {
                     exponent = true;
+                    i++;
                     break;
                 }
                 else {
-                    cout << "Invalid Input. Try again.\n\n";
-                    output = false;
+                    fail = true;
                     break;
                 }
                 i++;
@@ -108,42 +107,41 @@ vector<vector <int>> inputNum() {
             if (exponent) while (i < input.length()) {
                 nextSymbol = input[i];
                 if (isdigit(nextSymbol)) {
-                    expPart *= 10;
-                    expPart += (double)nextSymbol - 48; //0 in ASCII is 48
+                    exp.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+                }
+                else if (expFirst && nextSymbol == '-') {
+                    expSign = -1;
+                }
+                else if (i == input.length() - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
+                    suffix = true;
                 }
                 else {
-                    cout << "Invalid Input. Try again.\n\n";
-                    output = false;
+                    fail = true;
                     break;
                 }
+                expFirst = false;
                 i++;
             }
-            if (dec.size() == 0) {
-                cout << "Invalid Input. Try again.\n\n";
-                output = false;
-            }
+            if ( (!suffix && !exponent && !decimal) ||
+                (whole.size() == 0 && dec.size() == 0) ) fail = true;
         }
+        else fail = true;
+
+        if (fail) cout << "Invalid Input. Try again.\n\n";
         else {
-            cout << "Invalid Input. Try again.\n\n";
-            output = false;
-        }
-        if (output) {
             cout << "  ";
             for (int i = 0; i < whole.size(); i++) cout << whole[i];
-            cout << ".";
+            if (dec.size() > 0) cout << ".";
             for (int i = 0; i < dec.size(); i++) cout << dec[i];
-            if (exponent) cout << "e" << setprecision(20) << expPart;
+            if (exponent) cout << "e";
+            for (int i = 0; i < exp.size(); i++) cout << exp[i];
             cout << "\n\n";
         }
     } while (true);
-    full.push_back(whole);
-    full.push_back(dec);
-    return full;
 }
 
 int main() {
-    vector<vector <int>> num = inputNum();
-
+    inputNum();
     return 0;
 }
 
