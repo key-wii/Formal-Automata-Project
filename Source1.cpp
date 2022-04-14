@@ -12,11 +12,11 @@ void inputNum() {
     vector<int> whole;
     vector<int> dec;
     vector<int> exp;
-    long double full = 0;
     do {
         whole.clear();
         dec.clear();
         exp.clear();
+        long double full = 0;
 
         cout << "Please input a floating point number (or q to quit)\n";
         cout << "> ";
@@ -130,11 +130,27 @@ void inputNum() {
         if (fail) cout << "Invalid Input. Try again.\n\n";
         else {
             cout << "  ";
-            for (int i = 0; i < whole.size(); i++) cout << whole[i];
+            /*for (int i = 0; i < whole.size(); i++) cout << whole[i];
             if (dec.size() > 0) cout << ".";
             for (int i = 0; i < dec.size(); i++) cout << dec[i];
             if (exponent) cout << "e";
-            for (int i = 0; i < exp.size(); i++) cout << exp[i];
+            for (int i = 0; i < exp.size(); i++) cout << exp[i];*/
+
+            int j = 0;
+            for (int i = whole.size() - 1; i >= 0; i--) {
+                full += whole[i] * pow(10, j);
+                j++;
+            }
+            for (int i = 0; i < dec.size(); i++)
+                full += dec[i] * pow(10, (-i - 1));
+            j = 0;
+            long double expPart = 0;
+            for (int i = exp.size() - 1; i >= 0; i--) {
+                expPart += exp[i] * pow(10, j);
+                j++;
+            }
+            full = full * pow(10, expPart * expSign);
+            cout << setprecision(16) << full;
             cout << "\n\n";
         }
     } while (true);
