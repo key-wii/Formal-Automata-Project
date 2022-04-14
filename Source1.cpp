@@ -1,8 +1,5 @@
 #include <iostream>
 #include <iomanip>
-#include <string>
-#include <stdio.h>
-#include <ctype.h>
 #include <vector>
 using namespace std;
 
