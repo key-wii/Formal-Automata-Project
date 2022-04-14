@@ -75,6 +75,7 @@ void inputNum() {
                 i++;
             }
             if (decimal && !exponent) while (i < input.length()) {
+                prevSymbol = nextSymbol;
                 nextSymbol = input[i];
                 if (isdigit(nextSymbol)) {
                     decPlace++;
@@ -89,7 +90,7 @@ void inputNum() {
                 else if (i == input.length() - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
                     suffix = true;
                 }
-                else if (nextSymbol == 'e' || nextSymbol == 'E') {
+                else if (prevSymbol != '_' && (nextSymbol == 'e' || nextSymbol == 'E')) {
                     exponent = true;
                     i++;
                     break;
@@ -105,8 +106,13 @@ void inputNum() {
                 if (isdigit(nextSymbol)) {
                     exp.push_back((int)nextSymbol - 48); //0 in ASCII is 48
                 }
-                else if (expFirst && nextSymbol == '-') {
-                    expSign = -1;
+                else if (expFirst) {
+                    if (prevSymbol == '_') {
+                        fail = true;
+                        return;
+                    }
+                    if (nextSymbol == '-')
+                        expSign = -1;
                 }
                 else if (i == input.length() - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
                     suffix = true;
@@ -125,8 +131,8 @@ void inputNum() {
 
         if (fail) cout << "Invalid Input. Try again.\n\n";
         else {
-            cout << "  ";
-            /*for (int i = 0; i < whole.size(); i++) cout << whole[i];
+            /*cout << "  ";
+            for (int i = 0; i < whole.size(); i++) cout << whole[i];
             if (dec.size() > 0) cout << ".";
             for (int i = 0; i < dec.size(); i++) cout << dec[i];
             if (exponent) cout << "e";
@@ -146,6 +152,7 @@ void inputNum() {
                 j++;
             }
             full = full * pow(10, expPart * expSign);
+            cout << "Number stored: ";
             cout << setprecision(16) << full;
             cout << "\n\n";
         }
