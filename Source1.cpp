@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <vector>
 using namespace std;
+//vector <long double> numVector;
 
 void inputNum() {
     string input;
@@ -152,6 +153,7 @@ void inputNum() {
                 j++;
             }
             full = full * pow(10, expPart * expSign);
+            //numVector.push_back(full);
             cout << "Number stored: ";
             cout << setprecision(16) << full;
             cout << "\n\n";
@@ -163,19 +165,3 @@ int main() {
     inputNum();
     return 0;
 }
-
-/*long double add() {
-
-}
-
-long double subtr() {
-
-}
-
-long double mult() {
-
-}
-
-long double div() {
-
-}*/
