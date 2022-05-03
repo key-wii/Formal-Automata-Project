@@ -5,47 +5,66 @@
 using namespace std;
 
 vector <long double> output;
-vector <long double> operators;
+vector <char> operators;
 vector <int> priorities;
 
+int getNumLen(string input, int numLength, int start) {
+    if (input.find(")", start) != string::npos)
+        numLength = input.find(")", start);
+    if (input.find("+", start) != string::npos) {
+        int temp = input.find("+", start);
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("-", start) != string::npos) {
+        int temp = input.find("-", start);
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("*", start) != string::npos) {
+        int temp = input.find("*", start);
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("/", start) != string::npos) {
+        int temp = input.find("/", start);
+        if (temp < numLength) numLength = temp;
+    }
+    return numLength;
+}
+
 void inputNum() {
-    string input;
-    vector<int> whole;
-    vector<int> dec;
-    vector<int> exp;
     int priority = 0;
+    bool fail = false;
+    //infinite loop (until manual exit)
     do {
-        whole.clear();
-        dec.clear();
-        exp.clear();
-        long double full = 0;
+        output.clear();
+        operators.clear();
+        priorities.clear();
+        vector<int> whole;
+        vector<int> dec;
+        vector<int> exp;
 
         cout << "Please input a floating point number (or q to quit)\n";
         cout << "> ";
+        string input;
         getline(cin, input);
+        fail = false;
 
         int numLength = input.length();
-        if (input.find(" ") != string::npos)
-            numLength = input.find(" ");;
-        if (input.find(")") != string::npos) {
-            int temp = input.find(")");
-            if (temp < numLength) numLength = temp;
-        }
+        numLength = getNumLen(input, numLength, 0);
 
-        int i = 1;
         char prevSymbol;
         char nextSymbol = input[0];
+        int index = 1;
         int wholeDigits = 1;
 
         while (nextSymbol == '(') {
-            i++;
+            nextSymbol = input[index];
+            index++;
             priority++;
-            nextSymbol = input[i - 1];
         }
 
         bool decimal = nextSymbol == '.';
         if (decimal) {
-            i++;
+            index++;
             wholeDigits = 0;
         }
         int decPlace = 0;
@@ -55,136 +74,188 @@ void inputNum() {
         int expSign = 1;
 
         bool suffix = false;
-        bool fail = false;
 
-        if (nextSymbol == 'q' || nextSymbol == 'Q') return;
-        else if (decimal || isdigit(nextSymbol)) {
-            if (!decimal) whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
-            while (i < numLength && !decimal) {
-                prevSymbol = nextSymbol;
-                nextSymbol = input[i];
-                if (isdigit(nextSymbol)) {
-                    wholeDigits++;
-                    whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
-                }
-                else if (nextSymbol == '_') {
-                    if (i == numLength - 1) {
+        do {
+            whole.clear();
+            dec.clear();
+            exp.clear();
+            long double full = 0;
+            cout << "index" << index << "\n";
+
+            if (nextSymbol == 'q' || nextSymbol == 'Q') return;
+            else if (decimal || isdigit(nextSymbol)) {
+                if (!decimal) whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+                while (index < numLength && !decimal) {
+                    prevSymbol = nextSymbol;
+                    nextSymbol = input[index];
+                    if (isdigit(nextSymbol)) {
+                        wholeDigits++;
+                        whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+                    }
+                    else if (nextSymbol == '_') {
+                        if (index == numLength - 1) {
+                            fail = true;
+                            break;
+                        }
+                    }
+                    else if (index == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
+                        suffix = true;
+                    }
+                    else if (index != numLength - 1 && (nextSymbol == 'e' || nextSymbol == 'E')) {
+                        exponent = true;
+                        index++;
+                        break;
+                    }
+                    else if (nextSymbol == '.') {
+                        if (prevSymbol == '_') {
+                            fail = true;
+                            break;
+                        }
+                        else decimal = true;
+                    }
+                    else {
                         fail = true;
                         break;
                     }
+                    index++;
                 }
-                else if (i == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
-                    suffix = true;
-                }
-                else if (i != numLength - 1 && (nextSymbol == 'e' || nextSymbol == 'E')) {
-                    exponent = true;
-                    i++;
-                    break;
-                }
-                else if (nextSymbol == '.') {
-                    if (prevSymbol == '_') {
+                if (decimal && !exponent) while (index < numLength) {
+                    prevSymbol = nextSymbol;
+                    nextSymbol = input[index];
+                    if (isdigit(nextSymbol)) {
+                        decPlace++;
+                        dec.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+                    }
+                    else if (nextSymbol == '_') {
+                        if (index == numLength - 1 || decPlace == 0) {
+                            fail = true;
+                            break;
+                        }
+                    }
+                    else if (index == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
+                        suffix = true;
+                    }
+                    else if (prevSymbol != '_' && (nextSymbol == 'e' || nextSymbol == 'E')) {
+                        exponent = true;
+                        index++;
+                        break;
+                    }
+                    else {
                         fail = true;
                         break;
                     }
-                    else decimal = true;
+                    index++;
                 }
-                else {
-                    fail = true;
-                    break;
-                }
-                i++;
-            }
-            if (decimal && !exponent) while (i < numLength) {
-                prevSymbol = nextSymbol;
-                nextSymbol = input[i];
-                if (isdigit(nextSymbol)) {
-                    decPlace++;
-                    dec.push_back((int)nextSymbol - 48); //0 in ASCII is 48
-                }
-                else if (nextSymbol == '_') {
-                    if (i == numLength - 1 || decPlace == 0) {
+                if (exponent) while (index < numLength) {
+                    nextSymbol = input[index];
+                    if (isdigit(nextSymbol)) {
+                        exp.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+                    }
+                    else if (expFirst) {
+                        if (prevSymbol == '_') {
+                            fail = true;
+                            return;
+                        }
+                        if (nextSymbol == '-')
+                            expSign = -1;
+                    }
+                    else if (index == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
+                        suffix = true;
+                    }
+                    else {
                         fail = true;
                         break;
                     }
+                    expFirst = false;
+                    index++;
                 }
-                else if (i == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
-                    suffix = true;
-                }
-                else if (prevSymbol != '_' && (nextSymbol == 'e' || nextSymbol == 'E')) {
-                    exponent = true;
-                    i++;
-                    break;
-                }
-                else {
-                    fail = true;
-                    break;
-                }
-                i++;
+                if ((!suffix && !exponent && !decimal) ||
+                    (whole.size() == 0 && dec.size() == 0)) fail = true;
             }
-            if (exponent) while (i < numLength) {
-                nextSymbol = input[i];
-                if (isdigit(nextSymbol)) {
-                    exp.push_back((int)nextSymbol - 48); //0 in ASCII is 48
-                }
-                else if (expFirst) {
-                    if (prevSymbol == '_') {
-                        fail = true;
-                        return;
-                    }
-                    if (nextSymbol == '-')
-                        expSign = -1;
-                }
-                else if (i == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
-                    suffix = true;
-                }
-                else {
-                    fail = true;
-                    break;
-                }
-                expFirst = false;
-                i++;
+            else fail = true;
+
+            nextSymbol = input[index];
+            while (nextSymbol == ')') {
+                index++;
+                priority--;
+                nextSymbol = input[index];
             }
-            if ( (!suffix && !exponent && !decimal) ||
-                (whole.size() == 0 && dec.size() == 0) ) fail = true;
+            if (priority < 0) fail = true;
+
+            if (fail) {
+                cout << "Invalid Input. Try again.\n\n";
+                break;
+            }
+            else {
+                cout << "\n";
+                for (int i = 0; i < whole.size(); i++) cout << whole[i];
+                if (dec.size() > 0) cout << ".";
+                for (int i = 0; i < dec.size(); i++) cout << dec[i];
+                if (exponent) cout << "e";
+                for (int i = 0; i < exp.size(); i++) cout << exp[i];
+                cout << "\n\n";
+
+                int j = 0;
+                for (int i = whole.size() - 1; i >= 0; i--) {
+                    full += whole[i] * pow(10, j);
+                    j++;
+                }
+                for (int i = 0; i < dec.size(); i++)
+                    full += dec[i] * pow(10, (-i - 1));
+                j = 0;
+                long double expPart = 0;
+                for (int i = exp.size() - 1; i >= 0; i--) {
+                    expPart += exp[i] * pow(10, j);
+                    j++;
+                }
+                full = full * pow(10, expPart * expSign);
+                output.push_back(full);
+
+                cout << "out" << output.size() << " ";
+                cout << setprecision(16) << full;
+                cout << "\n";
+            }
+
+            if (nextSymbol == '+' || nextSymbol == '-' || nextSymbol == '*' || nextSymbol == '/') {
+                operators.push_back(nextSymbol);
+                index++;
+                nextSymbol = input[index];
+                cout << "opr" << operators.size() << " ";
+                cout << operators[operators.size() - 1];
+                cout << "\n";
+            }
+
+            wholeDigits = 1;
+
+            while (nextSymbol == '(') {
+                nextSymbol = input[index];
+                index++;
+                priority++;
+            }
+
+            bool decimal = nextSymbol == '.';
+            if (decimal) {
+                index++;
+                wholeDigits = 0;
+            }
+            decPlace = 0;
+
+            exponent = false;
+            expFirst = true;
+            expSign = 1;
+            suffix = false;
+
+            numLength = input.length();
+            numLength = getNumLen(input, numLength, index);
+            cout << "indexEnd" << index << "\n";
         }
-        else fail = true;
+        while (index < input.length());
 
-        nextSymbol = input[i];
-        while (nextSymbol == ')') {
-            i++;
-            priority--;
-            nextSymbol = input[i];
-        }
-        if (priority < 0) fail = true;
-
-        if (fail) cout << "Invalid Input. Try again.\n\n";
-        else {
-            /*cout << "  ";
-            for (int i = 0; i < whole.size(); i++) cout << whole[i];
-            if (dec.size() > 0) cout << ".";
-            for (int i = 0; i < dec.size(); i++) cout << dec[i];
-            if (exponent) cout << "e";
-            for (int i = 0; i < exp.size(); i++) cout << exp[i];*/
-
-            int j = 0;
-            for (int i = whole.size() - 1; i >= 0; i--) {
-                full += whole[i] * pow(10, j);
-                j++;
-            }
-            for (int i = 0; i < dec.size(); i++)
-                full += dec[i] * pow(10, (-i - 1));
-            j = 0;
-            long double expPart = 0;
-            for (int i = exp.size() - 1; i >= 0; i--) {
-                expPart += exp[i] * pow(10, j);
-                j++;
-            }
-            full = full * pow(10, expPart * expSign);
-            output.push_back(full);
-
+        if (!fail) {
             cout << " = ";
-            cout << setprecision(16) << full;
+            cout << setprecision(16) << output[output.size() - 1];
             cout << "\n\n";
+            index = 1;
         }
     } while (true);
 }
