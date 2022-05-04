@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-vector <long double> output;
+vector <long double> outputs;
 vector <char> operators;
 vector <int> priorities;
 
@@ -30,12 +30,34 @@ int getNumLen(string input, int numLength, int start) {
     return numLength;
 }
 
+void calculate() {
+    long double result = 0;
+    int len = priorities.size();
+
+    int priorityHigh = 0;
+    for (int i = 0; i < len; i++)
+        if (priorities[i] > priorityHigh) priorityHigh = priorities[i];
+
+    for (int i = 0; i < len; i++) {
+        if () {
+
+        }
+
+        priorityHigh--;
+    }
+
+
+    cout << " = ";
+    cout << setprecision(16) << result;
+    cout << "\n\n";
+}
+
 void inputNum() {
     int priority = 0;
     bool fail = false;
     //infinite loop (until manual exit)
     do {
-        output.clear();
+        outputs.clear();
         operators.clear();
         priorities.clear();
         vector<int> whole;
@@ -75,16 +97,24 @@ void inputNum() {
 
         bool suffix = false;
 
+        if (!decimal) whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
+        bool firstNum = true;
+        bool lastNum = false;
+
         do {
-            whole.clear();
-            dec.clear();
-            exp.clear();
+            if (lastNum) fail = true; //To prevent (a)(b); Numbers need operator in between
+            if (!firstNum) {
+                whole.clear();
+                dec.clear();
+                exp.clear();
+            }
+            firstNum = false;
+
             long double full = 0;
-            cout << "index" << index << "\n";
+            //cout << "index" << index << "\n";
 
             if (nextSymbol == 'q' || nextSymbol == 'Q') return;
             else if (decimal || isdigit(nextSymbol)) {
-                if (!decimal) whole.push_back((int)nextSymbol - 48); //0 in ASCII is 48
                 while (index < numLength && !decimal) {
                     prevSymbol = nextSymbol;
                     nextSymbol = input[index];
@@ -187,13 +217,13 @@ void inputNum() {
                 break;
             }
             else {
-                cout << "\n";
+                /*cout << "\n";
                 for (int i = 0; i < whole.size(); i++) cout << whole[i];
                 if (dec.size() > 0) cout << ".";
                 for (int i = 0; i < dec.size(); i++) cout << dec[i];
                 if (exponent) cout << "e";
                 for (int i = 0; i < exp.size(); i++) cout << exp[i];
-                cout << "\n\n";
+                cout << "\n\n";*/
 
                 int j = 0;
                 for (int i = whole.size() - 1; i >= 0; i--) {
@@ -209,22 +239,24 @@ void inputNum() {
                     j++;
                 }
                 full = full * pow(10, expPart * expSign);
-                output.push_back(full);
+                outputs.push_back(full);
 
-                cout << "out" << output.size() << " ";
+                /*cout << "out" << outputs.size() << " ";
                 cout << setprecision(16) << full;
-                cout << "\n";
+                cout << "\n";*/
             }
 
             if (nextSymbol == '+' || nextSymbol == '-' || nextSymbol == '*' || nextSymbol == '/') {
                 operators.push_back(nextSymbol);
                 index++;
                 nextSymbol = input[index];
-                cout << "opr" << operators.size() << " ";
+                /*cout << "opr" << operators.size() << " ";
                 cout << operators[operators.size() - 1];
-                cout << "\n";
+                cout << "\n";*/
             }
+            else lastNum = true;
 
+            //reset values
             wholeDigits = 1;
 
             while (nextSymbol == '(') {
@@ -233,7 +265,7 @@ void inputNum() {
                 priority++;
             }
 
-            bool decimal = nextSymbol == '.';
+            decimal = nextSymbol == '.';
             if (decimal) {
                 index++;
                 wholeDigits = 0;
@@ -247,16 +279,14 @@ void inputNum() {
 
             numLength = input.length();
             numLength = getNumLen(input, numLength, index);
-            cout << "indexEnd" << index << "\n";
+            //cout << "indexEnd" << index << "\n";
         }
         while (index < input.length());
 
         if (!fail) {
-            cout << " = ";
-            cout << setprecision(16) << output[output.size() - 1];
-            cout << "\n\n";
-            index = 1;
+            calculate();
         }
+        index = 1;
     } while (true);
 }
 
