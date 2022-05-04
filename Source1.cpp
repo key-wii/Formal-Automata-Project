@@ -7,6 +7,7 @@ using namespace std;
 vector <long double> outputs;
 vector <char> operators;
 vector <int> priorities;
+vector <int> parentheses;
 
 int getNumLen(string input, int numLength, int start) {
     if (input.find(")", start) != string::npos)
@@ -30,22 +31,84 @@ int getNumLen(string input, int numLength, int start) {
     return numLength;
 }
 
+void printVecs() {
+    cout << "nums: ";
+    for (int i = 0; i < outputs.size(); i++)
+        cout << outputs[i] << " ";
+    cout << "\n";
+    cout << "math: ";
+    for (int i = 0; i < operators.size(); i++)
+        cout << operators[i] << " ";
+    cout << "\n";
+    cout << "pris: ";
+    for (int i = 0; i < priorities.size(); i++)
+        cout << priorities[i] << " ";
+    cout << "\n";
+    cout << "pare: ";
+    for (int i = 0; i < parentheses.size(); i++)
+        cout << parentheses[i] << " ";
+    cout << "\n";
+}
+
+void setResult(int i, long double result) {
+    cout << "result: " << result << "\n"; //debug
+    outputs[i - 1] = result;
+    outputs.erase(outputs.begin() + i); //erases i'th element
+    priorities.erase(priorities.begin() + i); //erases i'th element
+    parentheses.erase(parentheses.begin() + i); //erases i'th element
+    operators.erase(operators.begin() + i - 1); //erases i-1'th element
+    printVecs();
+}
+
 void calculate() {
     long double result = 0;
-    int len = priorities.size();
 
     int priorityHigh = 0;
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < outputs.size(); i++)
         if (priorities[i] > priorityHigh) priorityHigh = priorities[i];
+    bool addSubtract = false;
 
-    for (int i = 0; i < len; i++) {
-        if () {
-
+    printVecs();
+    for (int i = 1; i < outputs.size(); i++) {
+        if (priorities[i] == priorityHigh && parentheses[i - 1] == parentheses[i] && priorities[i - 1] == priorities[i]) {
+            if (addSubtract) {
+                switch (operators[i - 1]) {
+                    case '+':
+                        result = outputs[i - 1] + outputs[i];
+                        setResult(i, result);
+                        i--;
+                        break;
+                    case '-':
+                        result = outputs[i - 1] - outputs[i];
+                        setResult(i, result);
+                        i--;
+                        break;
+                }
+            } else {
+                switch (operators[i - 1]) {
+                    case '*':
+                        result = outputs[i - 1] * outputs[i];
+                        setResult(i, result);
+                        i--;
+                        break;
+                    case '/':
+                        result = outputs[i - 1] / outputs[i];
+                        setResult(i, result);
+                        i--;
+                        break;
+                }
+            }
         }
-
-        priorityHigh--;
+        else if (i == outputs.size() - 1 && priorityHigh > 0) {
+            if (addSubtract) {
+                priorityHigh--;
+                cout << "priority down\n"; //DEBUG
+            }
+            addSubtract = !addSubtract;
+            i = 1;
+        }
+        // (1f+1f)-(2f*2f)
     }
-
 
     cout << " = ";
     cout << setprecision(16) << result;
@@ -53,7 +116,6 @@ void calculate() {
 }
 
 void inputNum() {
-    int priority = 0;
     bool fail = false;
     //infinite loop (until manual exit)
     do {
@@ -63,6 +125,8 @@ void inputNum() {
         vector<int> whole;
         vector<int> dec;
         vector<int> exp;
+        int priority = 0;
+        int paren = 0;
 
         cout << "Please input a floating point number (or q to quit)\n";
         cout << "> ";
@@ -82,6 +146,7 @@ void inputNum() {
             nextSymbol = input[index];
             index++;
             priority++;
+            paren++;
         }
 
         bool decimal = nextSymbol == '.';
@@ -204,6 +269,7 @@ void inputNum() {
             }
             else fail = true;
 
+            priorities.push_back(priority);
             nextSymbol = input[index];
             while (nextSymbol == ')') {
                 index++;
@@ -240,6 +306,7 @@ void inputNum() {
                 }
                 full = full * pow(10, expPart * expSign);
                 outputs.push_back(full);
+                parentheses.push_back(paren);
 
                 /*cout << "out" << outputs.size() << " ";
                 cout << setprecision(16) << full;
@@ -260,9 +327,11 @@ void inputNum() {
             wholeDigits = 1;
 
             while (nextSymbol == '(') {
-                nextSymbol = input[index];
+                //nextSymbol = input[index];
                 index++;
                 priority++;
+                paren++;
+                nextSymbol = input[index];
             }
 
             decimal = nextSymbol == '.';
