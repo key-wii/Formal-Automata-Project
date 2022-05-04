@@ -9,28 +9,6 @@ vector <char> operators;
 vector <int> priorities;
 vector <int> parentheses;
 
-int getNumLen(string input, int numLength, int start) {
-    if (input.find(")", start) != string::npos)
-        numLength = input.find(")", start);
-    if (input.find("+", start) != string::npos) {
-        int temp = input.find("+", start);
-        if (temp < numLength) numLength = temp;
-    }
-    if (input.find("-", start) != string::npos) {
-        int temp = input.find("-", start);
-        if (temp < numLength) numLength = temp;
-    }
-    if (input.find("*", start) != string::npos) {
-        int temp = input.find("*", start);
-        if (temp < numLength) numLength = temp;
-    }
-    if (input.find("/", start) != string::npos) {
-        int temp = input.find("/", start);
-        if (temp < numLength) numLength = temp;
-    }
-    return numLength;
-}
-
 void printVecs() {
     cout << "nums: ";
     for (int i = 0; i < outputs.size(); i++)
@@ -61,7 +39,7 @@ void setResult(int i, long double result) {
 
 void calculate() {
     long double result = 0;
-    //printVecs();
+    printVecs();
 
     int priorityHigh = 0;
     for (int i = 0; i < priorities.size(); i++)
@@ -134,6 +112,38 @@ void calculate() {
     cout << "\n\n";
 }
 
+int getNumLen(string input, int numLength, int start) {
+    int ePos = -99; //arbitrary int because string positions will never be -99
+    if (input.find("e", start) != string::npos)
+        ePos = input.find("e", start);
+    //cout << "ePos" << ePos <<"\n"; DEBUG
+
+    if (input.find(")", start) != string::npos)
+        numLength = input.find(")", start);
+    if (input.find("+", start) != string::npos) {
+        int temp = input.find("+", start);
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("-", start) != string::npos) {
+        int temp = input.find("-", start);
+        if (ePos != -99 && temp - 1 == ePos) {
+            int tempStart = temp + 1;
+            temp = input.find("-", tempStart);
+            //cout << "- after e\n"; DEBUG
+        }
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("*", start) != string::npos) {
+        int temp = input.find("*", start);
+        if (temp < numLength) numLength = temp;
+    }
+    if (input.find("/", start) != string::npos) {
+        int temp = input.find("/", start);
+        if (temp < numLength) numLength = temp;
+    }
+    return numLength;
+}
+
 void inputNum() {
     bool fail = false;
     //infinite loop (until manual exit)
@@ -195,7 +205,7 @@ void inputNum() {
             firstNum = false;
 
             long double full = 0;
-            //cout << "index" << index << "\n";
+            //cout << "index" << index << "\n"; //DEBUG
 
             if (nextSymbol == 'q' || nextSymbol == 'Q') return;
             else if (decimal || isdigit(nextSymbol)) {
@@ -302,13 +312,14 @@ void inputNum() {
                 break;
             }
             else {
-                /*cout << "\n";
+                //DEBUG
+                //cout << "\n";
                 for (int i = 0; i < whole.size(); i++) cout << whole[i];
                 if (dec.size() > 0) cout << ".";
                 for (int i = 0; i < dec.size(); i++) cout << dec[i];
                 if (exponent) cout << "e";
                 for (int i = 0; i < exp.size(); i++) cout << exp[i];
-                cout << "\n\n";*/
+                cout << "\n\n";
 
                 int j = 0;
                 for (int i = whole.size() - 1; i >= 0; i--) {
@@ -336,6 +347,7 @@ void inputNum() {
                 operators.push_back(nextSymbol);
                 index++;
                 nextSymbol = input[index];
+                //DEBUG
                 /*cout << "opr" << operators.size() << " ";
                 cout << operators[operators.size() - 1];
                 cout << "\n";*/
@@ -346,7 +358,7 @@ void inputNum() {
             wholeDigits = 1;
 
             while (nextSymbol == '(') {
-                //nextSymbol = input[index];
+                //nextSymbol = input[index]; //DEBUG
                 index++;
                 priority++;
                 paren++;
@@ -367,7 +379,7 @@ void inputNum() {
 
             numLength = input.length();
             numLength = getNumLen(input, numLength, index);
-            //cout << "indexEnd" << index << "\n";
+            //cout << "indexEnd" << index << "\n"; //DEBUG
         }
         while (index < input.length());
 
