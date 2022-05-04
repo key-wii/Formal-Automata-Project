@@ -138,7 +138,7 @@ void calculate() {
                 }
             }
             addSubtract = !addSubtract;
-            i = 1;
+            i = 0; //i++ will set i = 1
         }
     }
     // (1f+1f)-(2f*2f)
