@@ -62,13 +62,18 @@ void setResult(int i, long double result) {
 
 void calculate() {
     long double result = 0;
+    printVecs();
 
     int priorityHigh = 0;
-    for (int i = 0; i < outputs.size(); i++)
+    for (int i = 0; i < priorities.size(); i++)
         if (priorities[i] > priorityHigh) priorityHigh = priorities[i];
+    int parenthesesHigh = 0;
+    for (int i = 0; i < parentheses.size(); i++)
+        if (parentheses[i] > parenthesesHigh) parenthesesHigh = parentheses[i];
+
+    bool parenth = false;
     bool addSubtract = false;
 
-    printVecs();
     for (int i = 1; i < outputs.size(); i++) {
         if (priorities[i] == priorityHigh && parentheses[i - 1] == parentheses[i] && priorities[i - 1] == priorities[i]) {
             if (addSubtract) {
@@ -99,16 +104,44 @@ void calculate() {
                 }
             }
         }
-        else if (i == outputs.size() - 1 && priorityHigh > 0) {
+        if (i == outputs.size() - 1) {
             if (addSubtract) {
-                priorityHigh--;
-                cout << "priority down\n"; //DEBUG
+                /*if (parenth) {
+                    if (parenthesesHigh > 0) {
+                        for (int i = 0; i < parentheses.size(); i++)
+                            if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
+                        parenthesesHigh--;
+                    } else parenth = false;
+                }
+                else {
+                    if (priorityHigh > 0) {
+                        for (int i = 0; i < priorities.size(); i++)
+                            if (priorities[i] == priorityHigh) priorities[i] = priorityHigh - 1;
+                        priorityHigh--;
+                    }
+                    if (parenthesesHigh > 0) {
+                        for (int i = 0; i < parentheses.size(); i++)
+                            if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
+                        parenthesesHigh--;
+                    }
+                    printVecs();
+                }*/
+                if (priorityHigh > 0) {
+                    for (int i = 0; i < priorities.size(); i++)
+                        if (priorities[i] == priorityHigh) priorities[i] = priorityHigh - 1;
+                    priorityHigh--;
+                }
+                if (parenthesesHigh > 0) {
+                    for (int i = 0; i < parentheses.size(); i++)
+                        if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
+                    parenthesesHigh--;
+                }
             }
             addSubtract = !addSubtract;
             i = 1;
         }
-        // (1f+1f)-(2f*2f)
     }
+    // (1f+1f)-(2f*2f)
 
     cout << " = ";
     cout << setprecision(16) << result;
