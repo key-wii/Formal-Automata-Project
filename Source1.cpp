@@ -61,7 +61,7 @@ void setResult(int i, long double result) {
 
 void calculate() {
     long double result = 0;
-    printVecs();
+    //printVecs();
 
     int priorityHigh = 0;
     for (int i = 0; i < priorities.size(); i++)
@@ -109,24 +109,25 @@ void calculate() {
         }
         if (i == outputs.size() - 1) {
             if (addSubtract) {
-                if (priorityHigh > 0) {
+                if (priorityHigh > 0 && priorityHigh >= parenthesesHigh) {
                     for (int i = 0; i < priorities.size(); i++)
                         if (priorities[i] == priorityHigh) priorities[i] = priorityHigh - 1;
                     priorityHigh--;
                 }
-                if (parenthesesHigh > 0) {
+                if (parenthesesHigh > 0 && parenthesesHigh >= priorityHigh) {
                     for (int i = 0; i < parentheses.size(); i++)
                         if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
                     parenthesesHigh--;
                 }
-                printVecs();
             }
             addSubtract = !addSubtract;
             i = 0; //i++ will set i = 1
         }
     }
     // (1f+1f)-(2f*2f)
+    // = -2
     // 5.0*(12.0*(1.0-1.0)+3.0)+100.0+((9.0e+1f))-8.0e-1d
+    // = 116
 
     cout << " = ";
     cout << setprecision(16) << result;
@@ -146,7 +147,7 @@ void inputNum() {
         int priority = 0;
         int paren = 0;
 
-        cout << "Please input a floating point number (or q to quit)\n";
+        cout << "Please input a floating point expression without spaces (or q to quit)\n";
         cout << "> ";
         string input;
         getline(cin, input);
