@@ -36,7 +36,7 @@ void printVecs() {
     for (int i = 0; i < outputs.size(); i++)
         cout << outputs[i] << " ";
     cout << "\n";
-    cout << "math: ";
+    cout << "math:  ";
     for (int i = 0; i < operators.size(); i++)
         cout << operators[i] << " ";
     cout << "\n";
@@ -51,13 +51,12 @@ void printVecs() {
 }
 
 void setResult(int i, long double result) {
-    cout << "result: " << result << "\n"; //debug
     outputs[i - 1] = result;
     outputs.erase(outputs.begin() + i); //erases i'th element
     priorities.erase(priorities.begin() + i); //erases i'th element
     parentheses.erase(parentheses.begin() + i); //erases i'th element
     operators.erase(operators.begin() + i - 1); //erases i-1'th element
-    printVecs();
+    //printVecs();
 }
 
 void calculate() {
@@ -80,11 +79,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '+':
                         result = outputs[i - 1] + outputs[i];
+                        cout << outputs[i - 1] << " + " << outputs[i] << " = " << result << "\n";
                         setResult(i, result);
                         i--;
                         break;
                     case '-':
                         result = outputs[i - 1] - outputs[i];
+                        cout << outputs[i - 1] << " - " << outputs[i] << " = " << result << "\n";
                         setResult(i, result);
                         i--;
                         break;
@@ -93,11 +94,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '*':
                         result = outputs[i - 1] * outputs[i];
+                        cout << outputs[i - 1] << " * " << outputs[i] << " = " << result << "\n";
                         setResult(i, result);
                         i--;
                         break;
                     case '/':
                         result = outputs[i - 1] / outputs[i];
+                        cout << outputs[i - 1] << " / " << outputs[i] << " = " << result << "\n";
                         setResult(i, result);
                         i--;
                         break;
@@ -106,26 +109,6 @@ void calculate() {
         }
         if (i == outputs.size() - 1) {
             if (addSubtract) {
-                /*if (parenth) {
-                    if (parenthesesHigh > 0) {
-                        for (int i = 0; i < parentheses.size(); i++)
-                            if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
-                        parenthesesHigh--;
-                    } else parenth = false;
-                }
-                else {
-                    if (priorityHigh > 0) {
-                        for (int i = 0; i < priorities.size(); i++)
-                            if (priorities[i] == priorityHigh) priorities[i] = priorityHigh - 1;
-                        priorityHigh--;
-                    }
-                    if (parenthesesHigh > 0) {
-                        for (int i = 0; i < parentheses.size(); i++)
-                            if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
-                        parenthesesHigh--;
-                    }
-                    printVecs();
-                }*/
                 if (priorityHigh > 0) {
                     for (int i = 0; i < priorities.size(); i++)
                         if (priorities[i] == priorityHigh) priorities[i] = priorityHigh - 1;
@@ -136,12 +119,14 @@ void calculate() {
                         if (parentheses[i] == parenthesesHigh) parentheses[i] = parenthesesHigh - 1;
                     parenthesesHigh--;
                 }
+                printVecs();
             }
             addSubtract = !addSubtract;
             i = 0; //i++ will set i = 1
         }
     }
     // (1f+1f)-(2f*2f)
+    // 5.0*(12.0*(1.0-1.0)+3.0)+100.0+((9.0e+1f))-8.0e-1d
 
     cout << " = ";
     cout << setprecision(16) << result;
