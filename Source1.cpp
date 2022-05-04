@@ -9,6 +9,7 @@ vector <char> operators;
 vector <int> priorities;
 vector <int> parentheses;
 
+//Debug function
 void printVecs() {
     cout << "nums: ";
     for (int i = 0; i < outputs.size(); i++)
@@ -18,14 +19,14 @@ void printVecs() {
     for (int i = 0; i < operators.size(); i++)
         cout << operators[i] << " ";
     cout << "\n";
-    cout << "pris: ";
+    /*cout << "pris: ";
     for (int i = 0; i < priorities.size(); i++)
         cout << priorities[i] << " ";
     cout << "\n";
     cout << "pare: ";
     for (int i = 0; i < parentheses.size(); i++)
         cout << parentheses[i] << " ";
-    cout << "\n";
+    cout << "\n";*/
 }
 
 void setResult(int i, long double result) {
@@ -34,12 +35,12 @@ void setResult(int i, long double result) {
     priorities.erase(priorities.begin() + i); //erases i'th element
     parentheses.erase(parentheses.begin() + i); //erases i'th element
     operators.erase(operators.begin() + i - 1); //erases i-1'th element
-    //printVecs();
+    //printVecs(); //DEBUG
 }
 
 void calculate() {
     long double result = 0;
-    printVecs();
+    printVecs(); //DEBUG
 
     int priorityHigh = 0;
     for (int i = 0; i < priorities.size(); i++)
@@ -57,13 +58,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '+':
                         result = outputs[i - 1] + outputs[i];
-                        cout << outputs[i - 1] << " + " << outputs[i] << " = " << result << "\n";
+                        cout << outputs[i - 1] << " + " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
                     case '-':
                         result = outputs[i - 1] - outputs[i];
-                        cout << outputs[i - 1] << " - " << outputs[i] << " = " << result << "\n";
+                        cout << outputs[i - 1] << " - " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
@@ -72,13 +73,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '*':
                         result = outputs[i - 1] * outputs[i];
-                        cout << outputs[i - 1] << " * " << outputs[i] << " = " << result << "\n";
+                        cout << outputs[i - 1] << " * " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
                     case '/':
                         result = outputs[i - 1] / outputs[i];
-                        cout << outputs[i - 1] << " / " << outputs[i] << " = " << result << "\n";
+                        cout << outputs[i - 1] << " / " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
@@ -104,8 +105,10 @@ void calculate() {
     }
     // (1f+1f)-(2f*2f)
     // = -2
-    // 5.0*(12.0*(1.0-1.0)+3.0)+100.0+((9.0e+1f))-8.0e-1d
-    // = 116
+    // 5.0*(12.0*(1.0-1.0)+3.0)+100.0+((9.0e1f))-8.0e1d
+    // = 125
+    // 5.0*(12.0*(1.0-1.0)+3.0)+100.0+((9.0e+1f))-8.0e1d
+    // = 45
 
     cout << " = ";
     cout << setprecision(16) << result;
@@ -113,11 +116,6 @@ void calculate() {
 }
 
 int getNumLen(string input, int numLength, int start) {
-    int ePos = -99; //arbitrary int because string positions will never be -99
-    if (input.find("e", start) != string::npos)
-        ePos = input.find("e", start);
-    //cout << "ePos" << ePos <<"\n"; DEBUG
-
     if (input.find(")", start) != string::npos)
         numLength = input.find(")", start);
     if (input.find("+", start) != string::npos) {
@@ -126,11 +124,6 @@ int getNumLen(string input, int numLength, int start) {
     }
     if (input.find("-", start) != string::npos) {
         int temp = input.find("-", start);
-        if (ePos != -99 && temp - 1 == ePos) {
-            int tempStart = temp + 1;
-            temp = input.find("-", tempStart);
-            //cout << "- after e\n"; DEBUG
-        }
         if (temp < numLength) numLength = temp;
     }
     if (input.find("*", start) != string::npos) {
@@ -151,6 +144,7 @@ void inputNum() {
         outputs.clear();
         operators.clear();
         priorities.clear();
+        parentheses.clear();
         vector<int> whole;
         vector<int> dec;
         vector<int> exp;
@@ -313,13 +307,13 @@ void inputNum() {
             }
             else {
                 //DEBUG
-                //cout << "\n";
+                /*cout << "\n";
                 for (int i = 0; i < whole.size(); i++) cout << whole[i];
                 if (dec.size() > 0) cout << ".";
                 for (int i = 0; i < dec.size(); i++) cout << dec[i];
                 if (exponent) cout << "e";
                 for (int i = 0; i < exp.size(); i++) cout << exp[i];
-                cout << "\n\n";
+                cout << "\n\n";*/
 
                 int j = 0;
                 for (int i = whole.size() - 1; i >= 0; i--) {
