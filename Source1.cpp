@@ -274,7 +274,7 @@ void inputNum() {
                     else if (index == numLength - 1 && (nextSymbol == 'f' || nextSymbol == 'F' || nextSymbol == 'd' || nextSymbol == 'D')) {
                         suffix = true;
                     }
-                    else if (prevSymbol != '_' && (nextSymbol == 'e' || nextSymbol == 'E')) {
+                    else if (prevSymbol != '_' && index != numLength - 1 && (nextSymbol == 'e' || nextSymbol == 'E')) {
                         exponent = true;
                         index++;
                         break;
