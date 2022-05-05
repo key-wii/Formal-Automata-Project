@@ -128,18 +128,24 @@ int getNumLen(string input, int numLength, int start) {
         if (ePos != -99 && temp - 1 == ePos) {
             int tempStart = temp + 1;
             temp = input.find("+", tempStart);
-            //cout << "+ after e\n"; DEBUG
+            //DEBUG
+            /*cout << "+ after e\n";
+            cout << "temp " << temp << "\n";
+            cout << "tempStart " << tempStart << "\n";*/
         }
-        if (temp < numLength) numLength = temp;
+        if (temp < numLength && temp > 0) numLength = temp;
     }
     if (input.find("-", start) != string::npos) {
         int temp = input.find("-", start);
-        if (ePos != -99 && temp - 1 == ePos) {
+        if (ePos != 9999 && temp - 1 == ePos) {
             int tempStart = temp + 1;
             temp = input.find("-", tempStart);
-            //cout << "- after e\n"; DEBUG
+            //DEBUG
+            /*cout << "- after e\n";
+            cout << "temp " << temp << "\n";
+            cout << "tempStart " << tempStart << "\n";*/
         }
-        if (temp < numLength) numLength = temp;
+        if (temp < numLength && temp > 0) numLength = temp;
     }
     if (input.find("*", start) != string::npos) {
         int temp = input.find("*", start);
