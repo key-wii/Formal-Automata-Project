@@ -116,14 +116,29 @@ void calculate() {
 }
 
 int getNumLen(string input, int numLength, int start) {
+    int ePos = -99; //arbitrary int because string positions will never be -99
+    if (input.find("e", start) != string::npos)
+        ePos = input.find("e", start);
+    //cout << "ePos" << ePos <<"\n"; DEBUG
+
     if (input.find(")", start) != string::npos)
         numLength = input.find(")", start);
     if (input.find("+", start) != string::npos) {
         int temp = input.find("+", start);
+        if (ePos != -99 && temp - 1 == ePos) {
+            int tempStart = temp + 1;
+            temp = input.find("+", tempStart);
+            //cout << "+ after e\n"; DEBUG
+        }
         if (temp < numLength) numLength = temp;
     }
     if (input.find("-", start) != string::npos) {
         int temp = input.find("-", start);
+        if (ePos != -99 && temp - 1 == ePos) {
+            int tempStart = temp + 1;
+            temp = input.find("-", tempStart);
+            //cout << "- after e\n"; DEBUG
+        }
         if (temp < numLength) numLength = temp;
     }
     if (input.find("*", start) != string::npos) {
@@ -307,13 +322,13 @@ void inputNum() {
             }
             else {
                 //DEBUG
-                /*cout << "\n";
+                cout << "\n";
                 for (int i = 0; i < whole.size(); i++) cout << whole[i];
                 if (dec.size() > 0) cout << ".";
                 for (int i = 0; i < dec.size(); i++) cout << dec[i];
                 if (exponent) cout << "e";
                 for (int i = 0; i < exp.size(); i++) cout << exp[i];
-                cout << "\n\n";*/
+                cout << "\n";
 
                 int j = 0;
                 for (int i = whole.size() - 1; i >= 0; i--) {
@@ -332,6 +347,7 @@ void inputNum() {
                 outputs.push_back(full);
                 parentheses.push_back(paren);
 
+                //DEBUG
                 /*cout << "out" << outputs.size() << " ";
                 cout << setprecision(16) << full;
                 cout << "\n";*/
