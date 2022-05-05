@@ -39,8 +39,8 @@ void setResult(int i, long double result) {
 }
 
 void calculate() {
-    long double result = 0;
-    printVecs(); //DEBUG
+    long double result = outputs[outputs.size() - 1];
+    //printVecs(); //DEBUG
 
     int priorityHigh = 0;
     for (int i = 0; i < priorities.size(); i++)
@@ -58,13 +58,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '+':
                         result = outputs[i - 1] + outputs[i];
-                        cout << outputs[i - 1] << " + " << outputs[i] << " = " << result << "\n"; //DEBUG
+                        //cout << outputs[i - 1] << " + " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
                     case '-':
                         result = outputs[i - 1] - outputs[i];
-                        cout << outputs[i - 1] << " - " << outputs[i] << " = " << result << "\n"; //DEBUG
+                        //cout << outputs[i - 1] << " - " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
@@ -73,13 +73,13 @@ void calculate() {
                 switch (operators[i - 1]) {
                     case '*':
                         result = outputs[i - 1] * outputs[i];
-                        cout << outputs[i - 1] << " * " << outputs[i] << " = " << result << "\n"; //DEBUG
+                        //cout << outputs[i - 1] << " * " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
                     case '/':
                         result = outputs[i - 1] / outputs[i];
-                        cout << outputs[i - 1] << " / " << outputs[i] << " = " << result << "\n"; //DEBUG
+                        //cout << outputs[i - 1] << " / " << outputs[i] << " = " << result << "\n"; //DEBUG
                         setResult(i, result);
                         i--;
                         break;
