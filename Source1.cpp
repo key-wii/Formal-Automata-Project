@@ -328,13 +328,13 @@ void inputNum() {
             }
             else {
                 //DEBUG
-                cout << "\n";
+                /*cout << "\n";
                 for (int i = 0; i < whole.size(); i++) cout << whole[i];
                 if (dec.size() > 0) cout << ".";
                 for (int i = 0; i < dec.size(); i++) cout << dec[i];
                 if (exponent) cout << "e";
                 for (int i = 0; i < exp.size(); i++) cout << exp[i];
-                cout << "\n";
+                cout << "\n";*/
 
                 int j = 0;
                 for (int i = whole.size() - 1; i >= 0; i--) {
